@@ -8,8 +8,7 @@
     "start": "node src/index.js",
     "prisma": "prisma",
     "generate": "prisma generate",
-    "postinstall": "prisma generate",
-    "vercel-build": "prisma generate",
+    "vercel-build": "node node_modules/prisma/build/index.js generate",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.js",
     "validate": "prisma validate --schema prisma/schema.prisma",
@@ -24,9 +23,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "morgan": "^1.10.0"
-  },
-  "devDependencies": {
+    "morgan": "^1.10.0",
     "prisma": "^5.22.0"
-  }
+  },
+  "devDependencies": {}
 }
