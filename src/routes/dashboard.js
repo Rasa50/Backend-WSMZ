@@ -1,8 +1,12 @@
 const express = require('express');
-const router = express.Router();
-const ctrl = require('../controllers/dashboardController');
 const asyncWrapper = require('../middleware/asyncWrapper');
+const { requireAdmin } = require('../middleware/requireAdmin');
+const { getDashboardSummary } = require('../services/db');
 
-router.get('/sum', asyncWrapper(ctrl.getSummary));
+const router = express.Router();
+
+router.get('/sum', requireAdmin, asyncWrapper(async (_req, res) => {
+  res.json(await getDashboardSummary());
+}));
 
 module.exports = router;

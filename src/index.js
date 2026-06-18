@@ -1,16 +1,30 @@
-const http = require('http');
 const app = require('./app');
 const prisma = require('./prismaClient');
-const PORT = process.env.PORT || 3000;
+const { initOrderCounter } = require('./services/db');
 
-const server = http.createServer(app);
+const PORT = process.env.PORT || 3001;
+
+async function start() {
+  await prisma.$connect();
+  await initOrderCounter();
+
+  app.listen(PORT, () => {
+    console.log(`Backend running on http://localhost:${PORT}`);
+  });
+}
 
 process.on('SIGINT', async () => {
-  console.log('\nShutting down...');
   await prisma.$disconnect();
-  server.close(() => process.exit(0));
+  process.exit(0);
 });
 
-server.listen(PORT, () => {
-  console.log(`🚀 Server listening on http://localhost:${PORT}`);
+process.on('SIGTERM', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+start().catch(async (err) => {
+  console.error('Failed to start backend:', err);
+  await prisma.$disconnect();
+  process.exit(1);
 });

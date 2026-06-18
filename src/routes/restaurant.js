@@ -1,9 +1,16 @@
 const express = require('express');
-const router = express.Router();
-const ctrl = require('../controllers/restaurantController');
 const asyncWrapper = require('../middleware/asyncWrapper');
+const { requireAdmin } = require('../middleware/requireAdmin');
+const { getRestaurant, updateRestaurant } = require('../services/db');
 
-router.get('/', asyncWrapper(ctrl.getRestaurant));
-router.patch('/', asyncWrapper(ctrl.updateRestaurant));
+const router = express.Router();
+
+router.get('/', asyncWrapper(async (_req, res) => {
+  res.json(await getRestaurant());
+}));
+
+router.patch('/', requireAdmin, asyncWrapper(async (req, res) => {
+  res.json(await updateRestaurant(req.body));
+}));
 
 module.exports = router;
