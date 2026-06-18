@@ -522,7 +522,7 @@ async function createOrder(payload) {
     });
 
     return tx.order.findUnique({ where: { id: created.id }, include: orderInclude });
-  });
+  }, { timeout: 30000 });
 
   notifySSE(order);
   return mapOrder(order);
@@ -660,7 +660,7 @@ async function updateOrderStatus(id, newStatus, declineReason) {
     }
 
     return updated;
-  });
+  }, { timeout: 20000 });
   return order ? mapOrder(order) : null;
 }
 
