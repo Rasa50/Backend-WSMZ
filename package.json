@@ -8,6 +8,8 @@
     "start": "node src/index.js",
     "prisma": "prisma",
     "generate": "prisma generate",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.js",
     "validate": "prisma validate --schema prisma/schema.prisma",
