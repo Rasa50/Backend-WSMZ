@@ -1,13 +1,11 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider      = "postgresql"
-  url           = env("DATABASE_URL")
-  directUrl     = env("DIRECT_URL")
-  relationMode  = "prisma"
+  provider     = "sqlite"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Category {
@@ -105,7 +103,7 @@ model Order {
   customerWhatsapp String          @default("") @map("customer_whatsapp")
   notes            String          @default("")
   totalPrice       Int             @default(0) @map("total_price")
-  status           OrderStatus     @default(PENDING)
+  status           String          @default("PENDING")
   declineReason    String?         @map("decline_reason")
   createdAt        DateTime        @default(now()) @map("created_at")
   updatedAt        DateTime        @updatedAt @map("updated_at")
@@ -127,7 +125,7 @@ model OrderItem {
   subtotal    Int                @default(0)
   spiciness   String             @default("")
   soup        String             @default("")
-  flavors     Json?
+  flavors     String?
   notes       String             @default("")
   createdAt   DateTime           @default(now()) @map("created_at")
   updatedAt   DateTime           @updatedAt @map("updated_at")
@@ -174,7 +172,7 @@ model Payment {
   orderId       String        @unique @map("order_id")
   method        String        @default("QRIS")
   amount        Int           @default(0)
-  status        PaymentStatus @default(PENDING)
+  status        String        @default("PENDING")
   proofUrl      String        @default("") @map("proof_url")
   proofFileName String        @default("") @map("proof_file_name")
   verifiedAt    DateTime?     @map("verified_at")
@@ -227,18 +225,4 @@ model StockMovement {
   order          Order?   @relation(fields: [orderId], references: [id])
 
   @@map("stock_movements")
-}
-
-enum OrderStatus {
-  PENDING
-  PROCESSING
-  READY
-  COMPLETED
-  DECLINED
-}
-
-enum PaymentStatus {
-  PENDING
-  VERIFIED
-  REJECTED
 }

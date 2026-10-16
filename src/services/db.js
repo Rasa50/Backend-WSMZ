@@ -41,6 +41,17 @@ function cleanString(value, fallback = '') {
   return String(value).trim();
 }
 
+function parseFlavors(value) {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== 'string' || value.trim() === '') return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 function mapProduct(product) {
   return {
     id: product.id,
@@ -132,7 +143,7 @@ function mapOrder(order) {
         customization: hasCustomization ? {
           spiciness: item.spiciness,
           soup: item.soup,
-          flavors: Array.isArray(item.flavors) ? item.flavors : [],
+          flavors: parseFlavors(item.flavors),
           toppings,
           notes: item.notes,
         } : undefined,
@@ -462,7 +473,7 @@ async function createOrder(payload) {
           subtotal,
           spiciness: cleanString(customization.spiciness),
           soup: cleanString(customization.soup),
-          flavors: Array.isArray(customization.flavors) ? customization.flavors : [],
+          flavors: Array.isArray(customization.flavors) ? JSON.stringify(customization.flavors) : null,
           notes: cleanString(customization.notes),
         },
       });
@@ -533,9 +544,9 @@ async function getAllOrders(status, search) {
   if (status && status !== 'all') where.status = status;
   if (search) {
     where.OR = [
-      { customerName: { contains: search, mode: 'insensitive' } },
-      { customerWhatsapp: { contains: search, mode: 'insensitive' } },
-      { orderNumber: { contains: search, mode: 'insensitive' } },
+      { customerName: { contains: search } },
+      { customerWhatsapp: { contains: search } },
+      { orderNumber: { contains: search } },
     ];
   }
   const orders = await prisma.order.findMany({
